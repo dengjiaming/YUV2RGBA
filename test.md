@@ -169,56 +169,49 @@ Sw称为Within-class scatter matrix。
 这部分是本博文的核心。假设有C个人的人脸图像，每个人可以有多张图像，所以按人来分，可以将图像分为C类，这节就是要解决如何判别这C个类的问题。判别之前需要先处理下图像，将每张图像按照逐行逐列的形式获取像素组成一个向量，和第一节类似设该向量为x，设向量维数为n，设x为列向量（n行1列）。
 
 和第一节简单的二维数据分类不同，这里的n有可能成千上万，比如100x100的图像得到的向量为10000维，所以第一节里将x投影到一个向量的方法可能不适用了，比如下图：
-
-
-
+![](http://img.blog.csdn.net/20140411185100015)
 图（2）
 
 平面内找不到一个合适的向量，能够将所有的数据投影到这个向量而且不同类间合理的分开。所以我们需要增加投影向量w的个数（当然每个向量维数和数据是相同的，不然怎么投影呢），设w为：
-
-
+![](http://img.blog.csdn.net/20140411185708687)
 
 w1、w2等是n维的列向量，所以w是个n行k列的矩阵，这里的k其实可以按照需要随意选取，只要能合理表征原数据就好。x在w上的投影可以表示为：
-
-
+![](http://img.blog.csdn.net/20140411185906140)
 
 所以这里的y是k维的列向量。
 
 像上一节一样，我们将从投影后的类间散列度和类内散列度来考虑最优的w，考虑图（2）中二维数据分为三个类别的情况。与第一节类似，μi依然代表类别i的中心，而Sw定义如下：
-
-
+![](http://img.blog.csdn.net/20140411191151734)
 
 其中：
-
-
+![](http://img.blog.csdn.net/20140411191205687)
 
 代表类别i的类内散列度，它是一个nxn的矩阵。
 
 所有x的中心μ定义为：
-
+![](http://img.blog.csdn.net/20140411191723265)
 
 
 类间散列度定义和上一节有较大不同：
-
+![](http://img.blog.csdn.net/20140411191553781)
 
 
 代表的是每个类别到μ距离的加和，注意Ni代表类别i内x的个数，也就是某个人的人脸图像个数。
 
 上面的讨论都是投影之间的各种数据，而J(w)的计算实际是依靠投影之后数据分布的，所以有：
+![](http://img.blog.csdn.net/20140411192234546)
 
+![](http://img.blog.csdn.net/20140411192240843)
 
+![](http://img.blog.csdn.net/20140411192251421)
 
-
-
-
-
+![](http://img.blog.csdn.net/20140411192255687)
 
 
 分别代表投影后的类别i的中心，所有数据的中心，类内散列矩阵，类间散列矩阵。与上节类似J(w)可以定义为：
+![](http://img.blog.csdn.net/20140411192643750)
 
-
-
-
+![](http://img.blog.csdn.net/20140411192702906)
 
 回想我们上节的公式J(w)，分子是两类中心距，分母是每个类自己的散列度。现在投影方向是多维了（好几条直线），分子需要做一些改变，我们不是求两两样本中心距之和（这个对描述类别间的分散程度没有用），而是求每类中心相对于全样本中心的散列度之和。得到：
 ![](http://img.blog.csdn.net/20140411220346421)
@@ -238,9 +231,89 @@ w1、w2等是n维的列向量，所以w是个n行k列的矩阵，这里的k其�
 ![](http://img.blog.csdn.net/20140413105940671)
 得到了k个特征向量，如何匹配某人脸和数据库内人脸是否相似呢，方法是将这个人脸在k个特征向量上做投影，得到k维的列向量或者行向量，然后和已有的投影求得欧式距离，根据阈值来判断是否匹配。具体的方法在人脸识别经典算法一：特征脸方法（Eigenface）里有，可前往查看。需要说明的是，LDA和PCA两种方法对光照都是比较敏感的，如果你用光照均匀的图像作为依据去判别非均匀的，那基本就惨了。
 
+##### OpenCV源码
+##### fisher_faces.cpp
+void Fisherfaces::train(InputArrayOfArrays _src, InputArray _local_labels)
+![这里写图片描述](http://img.blog.csdn.net/20180216214633516?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+void Fisherfaces::predict(InputArray _src, Ptr<PredictCollector> collector)
+![这里写图片描述](http://img.blog.csdn.net/20180216210410403?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+## Local Binary Pattern Histograms
+&emsp;&emsp;Eigenfaces和Fisherfaces使用整体方法来进行人脸识别。你把你的数据当作图像空间的高维向量。我们都知道高维数据是糟糕的，所以一个低维子空间被确定，对于信息保存可能很好。Eigenfaces是最大化总的散度，这样可能导致，当方差由外部条件产生时，最大方差的主成分不适合用来分类。所以为使用一些鉴别分析，我们使用了LDA方法来优化。Fisherfaces方法可以很好的运作，至少在我们假设的模型的有限情况下。
+
+&emsp;&emsp; 现实生活是不完美的。你无法保证在你的图像中光照条件是完美的，或者说1个人的10张照片。所以，如果每人仅仅只有一张照片呢？我们的子空间的协方差估计方法可能完全错误，所以识别也可能错误。是否记得Eigenfaces在AT&T数据库上达到了96%的识别率？对于这样有效的估计，我们需要多少张训练图像呢？下图是Eigenfaces和Fisherfaces方法在AT&T数据库上的首选识别率，这是一个简单的数据库：
+![](http://docs.opencv.org/2.4/_images/at_database_small_sample_size.png)
+&emsp;&emsp; 因此，若你想得到好的识别率，你大约需要每个人有8(7~9)张图像，而Fisherfaces在这里并没有好的帮助。以上的实验是10个图像的交叉验证结果，使用了facerec框架： https://github.com/bytefish/facerec。
+&emsp;&emsp;LBPH（Local Binary Patterns Histograms，局部二值模式）是提取局部特征作为判别依据的。LBPH方法显著的优点是对光照不敏感，但是依然没有解决姿态和表情的问题。不过相比于特征脸方法，LBPH的识别率已经有了很大的提升。有些人脸库的识别率已经达到了98%+。
+
+#### LBP特征提取
+
+&emsp;&emsp;最初的LBPH是定义在像素3x3邻域内的，以邻域中心像素为阈值，将相邻的8个像素的灰度值与其进行比较，若周围像素值大于中心像素值，则该像素点的位置被标记为1，否则为0。这样，3x3邻域内的8个点经比较可产生8位二进制数（通常转换为十进制数即LBPH码，共256种），即得到该邻域中心像素点的LBPH值，并用这个值来反映该区域的纹理信息。如下图所示：
+![](http://img.blog.csdn.net/20140409100451171)
+
+用比较正式的公式来定义的话：
+![](http://img.blog.csdn.net/20140409102028328)
+
+其中![](http://img.blog.csdn.net/20140409102051484)代表3x3邻域的中心元素，它的像素值为ic，ip代表邻域内其他像素的值。s(x)是符号函数，定义如下：
+![](http://img.blog.csdn.net/20140409102057984)
+
+#### LBP的改进版本
+
+（1）圆形LBP算子
+
+&emsp;&emsp;基本的LBPH算子的最大缺陷在于它只覆盖了一个固定半径范围内的小区域，这显然不能满足不同尺寸和频率纹理的需要。为了适应不同尺度的纹理特征，并达到灰度和旋转不变性的要求，Ojala等对 LBP 算子进行了改进，将 3×3邻域扩展到任意邻域，并用圆形邻域代替了正方形邻域，改进后的 LBP 算子允许在半径为 R 的圆形邻域内有任意多个像素点。从而得到了诸如半径为R的圆形区域内含有P个采样点的LBP算子。比如下图定了一个5x5的邻域：
+![](http://img.blog.csdn.net/20140409101523156)
+
+上图内有八个黑色的采样点，每个采样点的值可以通过下式计算：
+![](http://img.blog.csdn.net/20140409102819171)
+
+其中![](http://img.blog.csdn.net/20140409102051484)为邻域中心点，![](http://img.blog.csdn.net/20140409102917984)为某个采样点。通过上式可以计算任意个采样点的坐标，但是计算得到的坐标未必完全是整数，所以可以通过双线性插值来得到该采样点的像素值：
+![](http://img.blog.csdn.net/20140409103242671)
+
+（2）LBP等价模式
+
+&emsp;&emsp;一个LBP算子可以产生不同的二进制模式，对于半径为R的圆形区域内含有P个采样点的LBP算子将会产生2^P种模式。很显然，随着邻域集内采样点数的增加，二进制模式的种类是急剧增加的。例如：5×5邻域内20个采样点，有220＝1,048,576种二进制模式。如此多的二值模式无论对于纹理的提取还是对于纹理的识别、分类及信息的存取都是不利的。同时，过多的模式种类对于纹理的表达是不利的。例如，将LBP算子用于纹理分类或人脸识别时，常采用LBP模式的统计直方图来表达图像的信息，而较多的模式种类将使得数据量过大，且直方图过于稀疏。因此，需要对原始的LBP模式进行降维，使得数据量减少的情况下能最好的代表图像的信息。
+&emsp;&emsp;为了解决二进制模式过多的问题，提高统计性，Ojala提出了采用一种“等价模式”（Uniform Pattern）来对LBP算子的模式种类进行降维。Ojala等认为，在实际图像中，绝大多数LBP模式最多只包含两次从1到0或从0到1的跳变。因此，Ojala将“等价模式”定义为：当某个LBP所对应的循环二进制数从0到1或从1到0最多有两次跳变时，该LBP所对应的二进制就称为一个等价模式类。如00000000（0次跳变），00000111（只含一次从0到1的跳变），10001111（先由1跳到0，再由0跳到1，共两次跳变）都是等价模式类。除等价模式类以外的模式都归为另一类，称为混合模式类，例如10010111（共四次跳变）。比如下图给出了几种等价模式的示意图。
+![](http://img.blog.csdn.net/20140409104010500)
+
+&emsp;&emsp;通过这样的改进，二进制模式的种类大大减少，而不会丢失任何信息。模式数量由原来的2P种减少为 P ( P-1)+2种，其中P表示邻域集内的采样点数。对于3×3邻域内8个采样点来说，二进制模式由原始的256种减少为58种，这使得特征向量的维数更少，并且可以减少高频噪声带来的影响。
+
+&emsp;&emsp;通过上述方法，每个像素都会根据邻域信息得到一个LBP值，如果以图像的形式显示出来可以得到下图，明显LBP对光照有较强的鲁棒性。
+![](http://img.blog.csdn.net/20140409104518703)
+
+#### LBP特征匹配
+
+如果将以上得到的LBP值直接用于人脸识别，其实和不提取LBP特征没什么区别，会造成计算量准确率等一系列问题。文献[1]中，将一副人脸图像分为7x7的子区域（如下图），并在子区域内根据LBP值统计其直方图，以直方图作为其判别特征。这样做的好处是在一定范围内避免图像没完全对准的情况，同时也对LBP特征做了降维处理。
+![](http://img.blog.csdn.net/20140409105549078)
+
+对于得到的直方图特征，有多种方法可以判别其相似性，假设已知人脸直方图为Mi​，待匹配人脸直方图为Si，那么可以通过:
+
+(1)直方图交叉核方法
+![](http://img.blog.csdn.net/20140409110315812)
+
+该方法的介绍在博文：[Histogram intersection(直方图交叉核,Pyramid Match Kernel)](http://blog.csdn.net/smartempire/article/details/23168945)
+
+(2)卡方统计方法
+![](http://img.blog.csdn.net/20140409110426046)
+
+该方法的介绍在博文：[卡方检验(Chi square statistic)](http://blog.csdn.net/smartempire/article/details/23203183)
+
+##### OpenCV源码
+##### lbph_faces.cpp
+void LBPH::train(InputArrayOfArrays _in_src, InputArray _in_labels, bool preserveData)
+![这里写图片描述](http://img.blog.csdn.net/20180216225248505?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+![这里写图片描述](http://img.blog.csdn.net/20180216225341958?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+![这里写图片描述](http://img.blog.csdn.net/2018021622541957?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+void LBPH::predict(InputArray _src, Ptr<PredictCollector> collector)
+![这里写图片描述](http://img.blog.csdn.net/20180216210410403?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
 ## 参考资料
 1. http://blog.csdn.net/smartempire/article/details/21406005
 2. http://blog.csdn.net/zouxy09/article/details/45276053/
 3. http://blog.csdn.net/real_myth/article/details/52771136
 4. http://blog.csdn.net/smartempire/article/details/23377385
+5. http://blog.csdn.net/smartempire/article/details/23249517
 
