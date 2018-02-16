@@ -2,7 +2,7 @@
 ## 前言
 &emsp;&emsp;前段时间对OpenCV的人脸识别进行了一些研究，在网上找到的资料，大部分都是介绍人脸检测，很少有涉及人脸识别的模块，甚至有的人连人脸检测与人脸识别的概念都没有搞清楚，而人脸识别模块大部分还是使用C++来实现的，并没有提供java接口，因此在Android上面进行人脸识别就需要多花点时间。
 &emsp;&emsp;人脸检测与人脸识别是不同的，人脸检测只需要找到人脸即可，而人脸识别需要把检测出来的人脸进行对比，识别出这是谁的脸。人脸检测可以使用OpenCV里自带的分类器，而人脸识别就需要自己收集数据，自己训练分类器。自从进入3.X时代以后，OpenCV将代码库分成了两部分，分别是[稳定的核心功能库](https://sourceforge.net/projects/opencvlibrary/files/opencv-android/3.3.0/opencv-3.3.0-android-sdk.zip/download) 和[试验性质的contrib库](https://github.com/opencv/opencv_contrib) 。人脸检测的代码在前者，人脸识别的代码在后者。
-&emsp;&emsp;官方给的人脸检测Demo是在Eclipse工程下实现的，而GitHub上的这工程已经转为AS工程，我们只需在此基础上加上人脸识别的功能即可。
+&emsp;&emsp;官方给的人脸检测Demo是在Eclipse工程下实现的，而在GitHub上的这个[工程](https://github.com/jiangdongguo/OpenCV4Android)已经转为AS工程，我们只需在此基础上加上人脸识别的功能即可。
 ##### 先甩下一些文档
 GitHub工程地址：https://github.com/jiangdongguo/OpenCV4Android
 OpenCV 3.0.0 API：https://docs.opencv.org/3.0-beta/modules/refman.html
