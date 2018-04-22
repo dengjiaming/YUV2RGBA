@@ -9,7 +9,7 @@ OpenCV 3.0.0 API：https://docs.opencv.org/3.0-beta/modules/refman.html
 OpenCV 2.4 API：https://docs.opencv.org/2.4/modules/refman.html
 OpenCV4Android SDK：https://sourceforge.net/projects/opencvlibrary/files/opencv-android/3.3.0/opencv-3.3.0-android-sdk.zip/download
 contrib模块：https://github.com/opencv/opencv_contrib
-本工程源码：https://github.com/keithActiv/OpenCV4Android
+本工程源码：https://github.com/dengjiaming/OpenCV4Android
 
 # 一、改为使用cmake进行ndk开发
 把app文件下的build.gradle修改一下两个地方；
@@ -73,7 +73,7 @@ target_link_libraries(detection_based_tracker android log
 将得到的结果复制到at.txt文件中，前面是图片的位置，后面是图片所属人脸的人的标签。
 &emsp;&emsp;这里有一点值得注意：我这里保存的图像格式是\*.jpg的，而不是跟原数据集一样是*.pgm的。经测试仍然可以训练出可以正确识别我自己人脸的模型来。但是如果大小不一致会报错。
 # 三、训练模型
-&emsp;&emsp;OpenCV 自带了三个人脸识别算法：Eigenfaces，Fisherfaces 和局部二值模式直方图 (LBPH)。理论知识请看：[OpenCV人脸识别之理论篇](http://blog.csdn.net/qq_36299210/article/details/79331297)
+&emsp;&emsp;OpenCV 自带了三个人脸识别算法：Eigenfaces，Fisherfaces 和局部二值模式直方图 (LBPH)。理论知识请看：[OpenCV人脸识别之理论篇](https://blog.csdn.net/dengjiamingcsu/article/details/79669719)
 &emsp;&emsp;将opencv_contrib/modules/face/include/opencv2的文件导入到app/src/main/cpp/include/opencv2中，将opencv_contrib/modules/face/src的文件导入到app/src/main/cpp中；
 ![这里写图片描述](http://img.blog.csdn.net/20180215203927832?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzYyOTkyMTA=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 此时，cpp文件如下：
@@ -135,6 +135,9 @@ fisher的结果是：
 其中，eigen加载与保存训练都花费将近10s。
 
 ## 建议使用LBPH模型进行人脸识别。
+
+
+
 
 
 
