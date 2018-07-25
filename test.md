@@ -1,9 +1,11 @@
 # 简析分析VA启动APP的逻辑
 #### 首先我们分析Application所做的准备工作。
 ![](http://p66upaccy.bkt.clouddn.com/15324328819885.jpg)
+
 如上图所示，ContextImpl也继承于Context，而Activity、Application、Service的父类ContextWrappper是使用了装饰模式，ContextWrappper（包括Activity、Application、Service）的多种方法（比如getApplicationContext）其实都是由ContextImpl去实现的。但是ContextImpl!=applicationContext。
 
 ![Free-Converter.com-pasted_graphic_1-3115234](http://p66upaccy.bkt.clouddn.com/Free-Converter.com-pasted_graphic_1-3115234.jpg)
+
 上图中，第一个参数为ContextImpl的值，第二个参数为applicationContext值，第三个参数为应用所在进程的名字。由上图可知，酷玩中所有进程的ContextImpl都是同一个值，applicationContext也基本相同（有时候会出现不同的Context，不太清楚）。
 
 ![Pasted Graphic 3](http://p66upaccy.bkt.clouddn.com/3.jpg)
