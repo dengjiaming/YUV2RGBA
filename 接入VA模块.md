@@ -66,6 +66,7 @@ BinderContentProvider（x进程的组件）保存IFloatClient的实现对象Cool
 
 #### 悬浮窗 -->> 脚本
 当悬浮窗需要与脚本通信时，通过BinderContentProvider（x进程的组件）与x进程进行通信，获取IScriptClient的实例进行通信。
+
 ![](http://p66upaccy.bkt.clouddn.com/15326627762620.jpg)
 
 
