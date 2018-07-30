@@ -34,6 +34,7 @@ ScriptProcessContentProvider（script进程的组件）保存IScriptClient的实
 
 #### script -->> float
 script进程通过FloatProcessContentProvider获取BaseFloatClientImpl（client对象）与悬浮窗进程通信。
+
 ![](http://p66upaccy.bkt.clouddn.com/15326632038526.jpg)
 ![](http://p66upaccy.bkt.clouddn.com/15326632123917.jpg)
 
@@ -59,6 +60,7 @@ BinderContentProvider（x进程的组件）保存IFloatClient的实现对象Cool
 
 #### 脚本 -->> 悬浮窗
 当脚本需要与悬浮窗通信时，通过BinderContentProvider（x进程的组件）与x进程进行通信，获取IClientClient的实例进行通信。
+
 ![](http://p66upaccy.bkt.clouddn.com/15326632038526.jpg)
 ![](http://p66upaccy.bkt.clouddn.com/15326632123917.jpg)
 
@@ -73,6 +75,7 @@ BinderContentProvider（x进程的组件）保存IFloatClient的实现对象Cool
 ![](http://p66upaccy.bkt.clouddn.com/15326033268780.jpg)
 
 FloatProcessContentProvider（float进程的组件）保存IFloatClient的实现对象BaseFloatClientImpl，主进程通过FloatProcessContentProvider获取BaseFloatClientImpl（client对象）与float进程通信。打开悬浮窗，在BaseFloatViewService。onStartCommand添加悬浮窗。
+
 ![](http://p66upaccy.bkt.clouddn.com/15325948284402.jpg)
 ![](http://p66upaccy.bkt.clouddn.com/15325952891460.jpg)
 
